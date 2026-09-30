@@ -41,26 +41,25 @@ def carica_dati():
     if not os.path.exists(FILE_DATI):
         return 1
     with open(FILE_DATI, "r", encoding="utf-8") as f:
-        contenuto = f.read().strip()
-        if contenuto == "":
-            return 1
-        else:
+        try:
             dati = json.load(f)
-            for dato in dati["medici"]:
-                medico = Medico(dato["matricola"], dato["nome"], dato["cognome"])
-                medico.num_pazienti = dato["num_pazienti"]
-                medico.pazienti = dato["pazienti"]
-                medici.append(medico)
-            for dato in dati["pazienti"]:
-                paziente = Paziente(
-                    dato["id_paziente"],
-                    dato["nome"],
-                    dato["cognome"],
-                    dato["cf"],
-                    dato["medico_assegnato"],
-                )
-                pazienti.append(paziente)
-            return dati["id_pazienti"]
+        except json.JSONDecodeError:
+            return 1
+        for dato in dati["medici"]:
+            medico = Medico(dato["matricola"], dato["nome"], dato["cognome"])
+            medico.num_pazienti = dato["num_pazienti"]
+            medico.pazienti = dato["pazienti"]
+            medici.append(medico)
+        for dato in dati["pazienti"]:
+            paziente = Paziente(
+                dato["id_paziente"],
+                dato["nome"],
+                dato["cognome"],
+                dato["cf"],
+                dato["medico_assegnato"],
+            )
+            pazienti.append(paziente)
+        return dati["id_pazienti"]
 
 
 pazienti = []
