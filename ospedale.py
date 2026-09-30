@@ -41,22 +41,26 @@ def carica_dati():
     if not os.path.exists(FILE_DATI):
         return 1
     with open(FILE_DATI, "r", encoding="utf-8") as f:
-        dati = json.load(f)
-        for dato in dati["medici"]:
-            medico = Medico(dato["matricola"], dato["nome"], dato["cognome"])
-            medico.num_pazienti = dato["num_pazienti"]
-            medico.pazienti = dato["pazienti"]
-            medici.append(medico)
-        for dato in dati["pazienti"]:
-            paziente = Paziente(
-                dato["id_paziente"],
-                dato["nome"],
-                dato["cognome"],
-                dato["cf"],
-                dato["medico_assegnato"],
-            )
-            pazienti.append(paziente)
-        return dati["id_pazienti"]
+        contenuto = f.read().strip()
+        if contenuto == "":
+            return 1
+        else:
+            dati = json.load(f)
+            for dato in dati["medici"]:
+                medico = Medico(dato["matricola"], dato["nome"], dato["cognome"])
+                medico.num_pazienti = dato["num_pazienti"]
+                medico.pazienti = dato["pazienti"]
+                medici.append(medico)
+            for dato in dati["pazienti"]:
+                paziente = Paziente(
+                    dato["id_paziente"],
+                    dato["nome"],
+                    dato["cognome"],
+                    dato["cf"],
+                    dato["medico_assegnato"],
+                )
+                pazienti.append(paziente)
+            return dati["id_pazienti"]
 
 
 pazienti = []
@@ -68,8 +72,12 @@ def nuovo_paziente(id_persone):
     nome = input("Inserisci nome: ")
     cognome = input("Inserisci cognome: ")
     cf = input("Inserici codice fiscale: ")
-    paziente = Paziente(id_persone, nome, cognome, cf, None)
-    pazienti.append(paziente)
+    esito_paziente = scheda_paziente(cf)
+    if esito_paziente != None:
+        print("IL PAZIENTE E GIA STATO INSERITO")
+    else:
+        paziente = Paziente(id_persone, nome, cognome, cf, None)
+        pazienti.append(paziente)
 
 
 def nuovo_medico():
@@ -117,9 +125,11 @@ while run:
         break
     elif scelta == 1:
         nuovo_medico()
+        salva_dati(id_pazienti)
     elif scelta == 2:
         nuovo_paziente(id_pazienti)
         id_pazienti += 1
+        salva_dati(id_pazienti)
     elif scelta == 3:
         matricola = int(input("Inserisci la matricola del medico: "))
         esito_medico = cerca_medico(matricola)
@@ -148,6 +158,7 @@ while run:
                     esito_paziente.medico_assegnato = esito_medico.matricola
                     esito_medico.pazienti.append(esito_paziente.cf)
                     esito_medico.num_pazienti += 1
+                    salva_dati(id_pazienti)
                     print("PAZIENTE ASSEGNATO")
                 else:
                     print("RISPOSTA NON VALIDA")
