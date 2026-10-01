@@ -67,7 +67,7 @@ medici = []
 id_pazienti = carica_dati()
 
 
-def nuovo_paziente(id_persone):
+def nuovo_paziente(id_pazienti):
     nome = input("Inserisci nome: ")
     cognome = input("Inserisci cognome: ")
     cf = input("Inserici codice fiscale: ")
@@ -75,7 +75,7 @@ def nuovo_paziente(id_persone):
     if esito_paziente != None:
         print("IL PAZIENTE E GIA STATO INSERITO")
     else:
-        paziente = Paziente(id_persone, nome, cognome, cf, None)
+        paziente = Paziente(id_pazienti, nome, cognome, cf, None)
         pazienti.append(paziente)
 
 
